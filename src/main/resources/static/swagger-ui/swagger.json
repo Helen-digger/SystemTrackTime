@@ -1,0 +1,274 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Track Time API",
+    "description": "API for tracking time statistics. This API allows users to track time statistics for packages, classes, and methods in a Java application.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "TODO",
+      "email": "your.email@example.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/hello": {
+      "get": {
+        "summary": "Get Hello Message",
+        "description": "Endpoint to retrieve a simple 'Hello, World!' message with blocking time tracking.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/async/hello": {
+      "get": {
+        "summary": "Get Async Hello Message",
+        "description": "Endpoint to retrieve a simple 'Hello, World!' message with async time tracking.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/track/package/list": {
+      "get": {
+        "summary": "Get All Tracked Packages",
+        "description": "Endpoint to retrieve statistics for all tracked packages.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PackageStatisticsDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/track/{packageName}": {
+      "get": {
+        "summary": "Get All Classes in Package",
+        "description": "Endpoint to retrieve statistics for all classes in a specified package.",
+        "parameters": [
+          {
+            "name": "packageName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the package"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/components/schemas/ClassStatisticsDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/track/{packageName}/{className}": {
+      "get": {
+        "summary": "Get All Methods in Class",
+        "description": "Endpoint to retrieve statistics for all methods in a specified class.",
+        "parameters": [
+          {
+            "name": "packageName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the package"
+          },
+          {
+            "name": "className",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the class"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassStatisticsDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/track/{packageName}/{className}/{methodName}": {
+      "get": {
+        "summary": "Get Method Statistics",
+        "description": "Endpoint to retrieve statistics for a specified method.",
+        "parameters": [
+          {
+            "name": "packageName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the package"
+          },
+          {
+            "name": "className",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the class"
+          },
+          {
+            "name": "methodName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the method"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MethodStatisticsDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ClassStatisticsDTO": {
+        "type": "object",
+        "properties": {
+          "methods": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/MethodStatisticsDTO"
+            }
+          }
+        }
+      },
+      "MethodStatisticsDTO": {
+        "type": "object",
+        "properties": {
+          "mean": {
+            "type": "number",
+            "format": "double",
+            "description": "Mean value"
+          },
+          "median": {
+            "type": "number",
+            "format": "double",
+            "description": "Median value"
+          },
+          "mode": {
+            "type": "number",
+            "format": "double",
+            "description": "Mode value"
+          },
+          "ninetyNinePercentile": {
+            "type": "number",
+            "format": "double",
+            "description": "99th percentile value"
+          },
+          "seventyFivePercentile": {
+            "type": "number",
+            "format": "double",
+            "description": "75th percentile value"
+          },
+          "standardDeviation": {
+            "type": "number",
+            "format": "double",
+            "description": "Standard deviation value"
+          },
+          "maximum": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Maximum value"
+          },
+          "minimum": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Minimum value"
+          }
+        }
+      },
+      "PackageStatisticsDTO": {
+        "type": "object",
+        "properties": {
+          "packages": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/ClassStatisticsDTO"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
